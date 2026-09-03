@@ -23,7 +23,83 @@ async function fetchWithTimeout(url, options = {}, ms = 5000) {
     clearTimeout(timer);
   }
 }
+function normalizeShikimori(items) {
+  return items.map(x => ({
+    mal_id: x.myanimelist_id || null,
+shikimori_id: x.id,
 
+    title:
+      x.russian ||
+      x.name ||
+      x.english ||
+      x.japanese ||
+      "Без названия",
+
+    title_russian: x.russian || null,
+    title_english: x.english || null,
+    title_japanese: x.japanese || null,
+
+    type: x.kind || null,
+    episodes: x.episodes || null,
+
+    score: x.score
+      ? Number(x.score)
+      : null,
+
+    synopsis: x.description || "",
+
+    images: {
+      jpg: {
+        large_image_url: x.image?.original
+          ? "https://shikimori.one" + x.image.original
+          : ""
+      },
+      webp: {
+        large_image_url: x.image?.original
+          ? "https://shikimori.one" + x.image.original
+          : ""
+      }
+    },
+
+    year: x.aired_on
+      ? Number(String(x.aired_on).slice(0, 4)) || null
+      : null,
+
+    source: "shikimori"
+  }));
+}
+
+async function searchShikimori(q) {
+  const response = await fetchWithTimeout(
+    "https://shikimori.one/api/animes?search=" +
+      encodeURIComponent(q) +
+      "&limit=8",
+    {
+      headers: {
+        "Accept": "application/json",
+        "User-Agent": "AniFlow/1.0"
+      }
+    },
+    5000
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Shikimori HTTP " + response.status
+    );
+  }
+
+  const body = await response.json();
+
+  if (!Array.isArray(body) || body.length === 0) {
+    throw new Error("Shikimori empty");
+  }
+
+  return {
+    data: normalizeShikimori(body),
+    source: "shikimori"
+  };
+}
 function normalizeKitsu(items) {
   return items.map(x => {
     const a = x.attributes || {};
@@ -282,11 +358,12 @@ export default {
        */
 
       try {
-        const result = await Promise.any([
-          searchJikan(q),
-          searchKitsu(q),
-          searchAniList(q)
-        ]);
+       const result = await Promise.any([
+  searchShikimori(q),
+  searchJikan(q),
+  searchAniList(q),
+  searchKitsu(q)
+]);
 
         return json(result);
 
