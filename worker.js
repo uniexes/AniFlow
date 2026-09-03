@@ -375,17 +375,7 @@ const result = await Promise.any([
 
 return result;
 
-      } catch (error) {
-
-        return json(
-          {
-            data: [],
-            error: "search_unavailable",
-            message:
-              "All anime search providers timed out or failed."
-          },
-          503
-        );
+      
       }
     }
 
