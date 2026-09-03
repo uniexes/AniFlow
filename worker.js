@@ -357,15 +357,23 @@ export default {
        * AniList или Kitsu спасут поиск.
        */
 
-      try {
-       const result = await Promise.any([
-  searchShikimori(q),
+     try {
+  const shikimori = await searchShikimori(q);
+
+  if (shikimori.data && shikimori.data.length > 0) {
+    return shikimori;
+  }
+} catch (e) {
+  console.log("Shikimori search failed:", e);
+}
+
+const result = await Promise.any([
   searchJikan(q),
   searchAniList(q),
   searchKitsu(q)
 ]);
 
-        return json(result);
+return result;
 
       } catch (error) {
 
