@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AniFlow</title>
+<style>
+:root{--bg:#080a20;--panel:#11142f;--panel2:#15183a;--line:#292d5b;--text:#f5f3ff;--muted:#9297bb;--p:#8b5cf6;--p2:#6b35d1;--green:#22d3a2;--blue:#60a5fa}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 78% 0,#25164d 0,#0c0e29 32%,#07091b 75%);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}.app{min-height:100vh;display:flex}
+aside{width:245px;min-width:245px;height:100vh;position:sticky;top:0;padding:25px 17px;border-right:1px solid #22264b;background:rgba(7,9,27,.82);backdrop-filter:blur(18px);overflow:hidden}
+.logo{font:700 27px Georgia,serif;margin:5px 13px 36px;display:flex;gap:10px;align-items:center}.logo i{font-style:normal;color:#a873ff;font-size:30px}
+nav a{display:flex;align-items:center;gap:13px;text-decoration:none;color:#aeb2d0;padding:12px 13px;border-radius:10px;margin:4px 0}nav a:hover,nav a.active{color:#e7ddff;background:linear-gradient(90deg,rgba(125,63,228,.28),rgba(125,63,228,.08))}.ico{width:22px;text-align:center}
+.div{height:1px;background:#24284e;margin:22px 8px}.art{position:absolute;bottom:0;left:0;right:0;height:190px;opacity:.38;background:radial-gradient(circle at 65% 72%,#d99cff 0 7%,transparent 8%),linear-gradient(150deg,transparent 44%,#32175e 45% 100%)}
+main{flex:1;max-width:1500px;margin:auto;padding:27px 30px 45px}.top{display:flex;gap:16px;align-items:center;margin-bottom:27px}.search{margin-left:auto;width:min(520px,48vw);position:relative}.search span{position:absolute;left:16px;top:10px;color:#9196b8;font-size:21px}.search input{width:100%;background:#121531;border:1px solid #282c54;border-radius:30px;padding:13px 18px 13px 43px;color:white;outline:none}.avatar{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#a874ff,#382064)}
+.title-row{display:flex;align-items:end;justify-content:space-between;margin-bottom:20px}h1{font-size:34px;margin:0 0 5px;letter-spacing:-.8px}.sub{color:var(--muted)}.add{border:0;color:white;font-weight:750;padding:13px 19px;border-radius:10px;background:linear-gradient(135deg,var(--p),var(--p2));box-shadow:0 12px 28px #713bd733}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.card{position:relative;overflow:hidden;border:1px solid #282c55;border-radius:15px;background:linear-gradient(180deg,#121631,#0e112b);transition:.22s;box-shadow:0 18px 45px #0005;cursor:pointer}.card:hover{transform:translateY(-5px);border-color:#5d42a0}
+.poster{height:380px;position:relative;background:#171a3b;overflow:hidden}.poster img{width:100%;height:100%;display:block;object-fit:cover}.fallback{height:100%;display:grid;place-items:center;text-align:center;padding:25px;background:radial-gradient(circle at 25% 20%,#8d59e455,transparent 32%),linear-gradient(145deg,#282151,#10183a)}.fallback b{font:700 31px Georgia,serif}
+
+.status{position:absolute;left:12px;bottom:12px;padding:7px 10px;border-radius:8px;background:#080b18cc;backdrop-filter:blur(7px);font-size:12px;font-weight:700;z-index:3}.done{color:var(--green)}.watch{color:var(--blue)}.want{color:#d3b5ff}
+.body{padding:14px 15px 16px}.name-row{display:flex;justify-content:space-between;gap:10px}.name{font-size:18px;font-weight:750}.rating{white-space:nowrap;color:#f7b731;font-weight:750}.meta{color:#8f94b8;font-size:13px;line-height:1.8;margin-top:8px}.bar{height:3px;background:linear-gradient(90deg,#8b5cf6,#5a3bd0);border-radius:5px;margin-top:12px}
+.stats{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:28px}.panel{background:linear-gradient(180deg,#121631,#0f122b);border:1px solid #252950;border-radius:15px;padding:21px}.panel-title{color:#b8badd;margin-bottom:19px}.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.stat{text-align:center}.stat b{font-size:27px;display:block}.stat span{font-size:12px;color:#858bab}.purple{color:#aa78ff}.blue{color:#69aaff}.bars{height:110px;display:flex;gap:10px;align-items:end}.bw{flex:1;text-align:center;color:#777d9f;font-size:11px}.b{height:0;max-height:80px;background:linear-gradient(#8557ed,#3e5acb);border-radius:5px 5px 2px 2px;margin-bottom:6px}
+.modal{position:fixed;inset:0;background:#030413c7;backdrop-filter:blur(9px);display:none;place-items:center;padding:20px;z-index:20}.modal.open{display:grid}
+.detail{width:min(1000px,100%);max-height:91vh;overflow:auto;border:1px solid #353965;border-radius:20px;background:#10132f;box-shadow:0 30px 100px #000a}.hero{display:grid;grid-template-columns:260px 1fr;gap:27px;padding:27px;background:radial-gradient(circle at 85% 20%,#7f4be933,transparent 36%)}.hero-poster{width:100%;height:375px;object-fit:cover;border-radius:13px;background:#191c40}.detail h2{font-size:34px;margin:5px 0}.original{color:#858aaa;margin-bottom:14px}.chips{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}.chip{font-size:12px;color:#d3c6f1;background:#171a3b;border:1px solid #343866;padding:6px 10px;border-radius:99px}.desc{color:#b7bbd5;line-height:1.7}.controls{margin-top:18px;padding:15px;border-radius:12px;border:1px solid #2b2f5b;background:#11152f}.control-row{display:flex;gap:12px;align-items:center;margin-top:10px}.control-row input,.addbox input,.addbox select{width:100%;background:#0a0d24;color:white;border:1px solid #30345e;border-radius:9px;padding:10px}.actions{display:flex;gap:10px;margin-top:15px}.primary,.secondary{padding:11px 15px;border-radius:9px}.primary{border:0;background:linear-gradient(135deg,var(--p),var(--p2));color:white;font-weight:700}.secondary{border:1px solid #383c68;background:#171a3a;color:#d1d3e5}.section{padding:0 27px 27px}.chars{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.char{border:1px solid #292e58;border-radius:10px;overflow:hidden;background:#151937}.char img{width:100%;height:125px;object-fit:cover;background:#202447}.char .char-fallback{height:125px;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,#8d59e455,transparent 35%),linear-gradient(145deg,#282151,#10183a);font-weight:800;font-size:22px;color:#ded4ff}.char div{padding:8px;font-size:12px}.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 18px}.filter{border:1px solid #2c315b;background:#121631;color:#aeb2d0;padding:9px 13px;border-radius:9px;cursor:pointer}.filter:hover,.filter.active{color:#fff;background:#6f45c9;border-color:#8d62e5}.filters select{margin-left:auto;background:#121631;color:#c9cbe0;border:1px solid #2c315b;border-radius:9px;padding:9px 12px;outline:none}.control-row select{width:100%;background:#0a0d24;color:white;border:1px solid #30345e;border-radius:9px;padding:10px}.addbox{width:min(560px,100%);background:#111431;border:1px solid #333861;border-radius:16px;padding:24px}.addbox h2{margin:0 0 17px}.results{margin-top:10px;display:grid;gap:8px;max-height:300px;overflow:auto}.result{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid #2b305a;background:#151938;border-radius:9px}.result img{width:45px;height:62px;object-fit:cover;border-radius:5px}.result-info{flex:1}.result button{border:0;background:#7d4de2;color:white;padding:8px 10px;border-radius:8px}
+@media(max-width:1150px){.grid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:1fr}}@media(max-width:700px){aside{display:none}main{padding:20px}.grid{grid-template-columns:1fr}.poster{height:430px}.search{width:auto;flex:1}.stat-grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.hero-poster{height:430px}.chars{grid-template-columns:repeat(3,1fr)}}
+
+/* v7 add-anime experience */
+.add-search{display:flex;gap:10px;margin-top:14px}.add-search input{flex:1}
+.search-results{display:grid;gap:10px;margin-top:14px;max-height:52vh;overflow:auto;padding-right:4px}
+.search-result{display:flex;gap:14px;align-items:center;padding:10px;border:1px solid #2c315b;background:#10142d;border-radius:12px;cursor:pointer}
+.search-result:hover{border-color:#8d62e5;background:#151a3a}.search-result img{width:58px;height:82px;object-fit:cover;border-radius:8px;background:#090c20}
+.search-result .sr-main{min-width:0;flex:1}.search-result h4{margin:0 0 5px;font-size:15px}.search-result p{margin:0;color:#9297bb;font-size:12px;line-height:1.35}
+.add-form{display:grid;grid-template-columns:150px 1fr;gap:18px;margin-top:16px}.add-form img{width:150px;height:215px;object-fit:cover;border-radius:12px;background:#090c20}
+.add-form .fields{display:grid;gap:10px}.add-form label{font-size:12px;color:#9297bb}.add-form input,.add-form select{width:100%;box-sizing:border-box;background:#0a0d24;color:white;border:1px solid #30345e;border-radius:9px;padding:10px;outline:none}
+.add-form input:focus,.add-form select:focus{border-color:#8d62e5}.search-state{color:#8f94b8;font-size:13px;padding:12px 0}
+@media(max-width:700px){.add-form{grid-template-columns:1fr}.add-form img{width:120px;height:172px}}
+
+.community-ratings{margin:18px 0 8px;padding:15px 17px;border:1px solid rgba(167,139,250,.22);border-radius:16px;background:rgba(124,92,190,.08);max-width:560px}.community-title{font-weight:700;margin-bottom:8px}.community-row{display:flex;justify-content:space-between;gap:20px;padding:6px 0}.community-row b{font-variant-numeric:tabular-nums}.community-note{font-size:12px;opacity:.55;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+<div class="logo"><i>✦</i>AniFlow</div>
+<nav>
+<a class="active" href="#"><span class="ico">▦</span>Моя коллекция</a><a href="#"><span class="ico">▷</span>Смотрю</a><a href="#"><span class="ico">✓</span>Просмотрено</a><a href="#"><span class="ico">⌂</span>Хочу посмотреть</a><a href="#"><span class="ico">◷</span>Отложено</a>
+<div class="div"></div><a href="#"><span class="ico">♧</span>Календарь</a><a href="#"><span class="ico">◇</span>Жанры</a><a href="#"><span class="ico">♙</span>Персонажи</a><a href="#"><span class="ico">◈</span>Студии</a>
+<div class="div"></div><a href="#"><span class="ico">⚙</span>Настройки</a><a href="#"><span class="ico">ⓘ</span>О приложении</a>
+</nav><div class="art"></div>
+</aside>
+<main>
+<div class="top"><div class="search"><span>⌕</span><input id="search" placeholder="Поиск по коллекции..."></div><div class="avatar">◈</div></div>
+<div class="title-row"><div><h1>Моя коллекция</h1><div class="sub" id="count"></div><div class="sub" style="margin-top:5px">Коллекция сохраняется прямо в браузере.</div></div><button class="add" id="openAdd">＋ Добавить аниме</button></div>
+<div class="filters">
+  <button class="filter active" data-status="all">Все</button>
+  <button class="filter" data-status="watching">Смотрю</button>
+  <button class="filter" data-status="done">Просмотрено</button>
+  <button class="filter" data-status="want">Хочу посмотреть</button>
+  <select id="sort">
+    <option value="added">Сначала добавленные</option>
+    <option value="rating-desc">Оценка: сначала высокая</option>
+    <option value="rating-asc">Оценка: сначала низкая</option>
+    <option value="name">По названию</option>
+    <option value="progress">По прогрессу</option>
+  </select>
+</div>
+<div class="grid" id="grid"></div>
+<div class="stats">
+<div class="panel"><div class="panel-title">▥ &nbsp; Общая статистика</div><div class="stat-grid">
+<div class="stat"><b id="total">0</b><span>Всего аниме</span></div><div class="stat"><b class="blue" id="done">0</b><span>Просмотрено</span></div><div class="stat"><b id="watching">0</b><span>Смотрю</span></div><div class="stat"><b class="purple" id="want">0</b><span>Хочу посмотреть</span></div><div class="stat"><b class="purple" id="avg">0.00</b><span>Средняя оценка</span></div>
+</div></div><div class="panel"><div class="panel-title">Распределение оценок</div><div class="bars" id="bars"></div></div>
+</div>
+</main></div>
+
+<div class="modal" id="detailModal"><div class="detail">
+<div class="hero"><img id="dPoster" class="hero-poster" src="" alt=""><div><div class="sub" id="dType"></div><h2 id="dTitle"></h2><div class="original" id="dOriginal"></div><div class="chips" id="dGenres"></div><div class="desc" id="dDesc">Загрузка…</div>
+<div class="community-ratings" id="communityRatings">
+  <div class="community-title">Оценки сообщества</div>
+  <div class="community-row"><span>⭐ MyAnimeList</span><b id="malScore">—</b></div>
+  <div class="community-row"><span>⭐ Shikimori</span><b id="shikiScore">—</b></div>
+  <div class="community-note" id="ratingsNote">Загружаю рейтинги…</div>
+</div>
+<div class="controls"><strong>Статус</strong><div class="control-row"><select id="dStatus"><option value="watching">Смотрю</option><option value="done">Просмотрено</option><option value="want">Хочу посмотреть</option></select></div><div style="margin-top:12px"><strong>Мой прогресс</strong></div><div class="control-row"><input id="dProgress" type="number" min="0" value="0"><span id="dEpisodes">/ ? серий</span></div><div style="margin-top:12px"><strong>Моя оценка</strong></div><div class="control-row"><input id="dRating" type="number" min="1" max="10" step=".1" placeholder="Не оценено"><span>из 10 ★</span></div>
+<div class="actions"><button class="primary" id="saveDetail">Сохранить</button><button class="secondary" id="deleteDetail">Удалить</button><button class="secondary" id="closeDetail">Закрыть</button></div></div></div></div>
+<div class="section"><h3>Персонажи</h3><div class="chars" id="chars"></div></div>
+</div></div>
+
+<div class="modal" id="addModal"><div class="modalbox addbox">
+      <button class="x" id="closeAdd">×</button>
+      <h2>Добавить аниме</h2>
+      <p class="sub">Найди аниме по названию и выбери его из результатов.</p>
+
+      <div class="add-search">
+        <input id="animeSearch" placeholder="Например: Naruto, One Piece, Frieren..." autocomplete="off">
+        <button class="btn primary" id="doSearch">Найти</button>
+      </div>
+
+      <div id="searchState" class="search-state">Начни с названия аниме.</div>
+      <div id="searchResults" class="search-results"></div>
+
+      <div id="selectedAnime" style="display:none">
+        <div class="add-form">
+          <img id="selectedPoster" alt="">
+          <div class="fields">
+            <div><label>Название</label><input id="newName" readonly></div>
+            <div><label>Статус</label><select id="newStatus">
+              <option value="want">Хочу посмотреть</option>
+              <option value="watching">Смотрю</option>
+              <option value="done">Просмотрено</option>
+            </select></div>
+            <div><label>Моя оценка (необязательно)</label><input id="newRating" type="number" min="1" max="10" step=".1" placeholder="—"></div>
+            <div><label>Просмотрено серий</label><input id="newWatched" type="number" min="0" value="0"></div>
+            <button class="btn primary" id="confirmAdd">Добавить в коллекцию</button>
+          </div>
+        </div>
+      </div>
+    </div></div></div>
+
+<script>
+const posters={
+  20:"https://cdn.myanimelist.net/images/anime/1141/142503l.jpg",
+  40748:"https://cdn.myanimelist.net/images/anime/1171/109222l.jpg",
+  269:"https://cdn.myanimelist.net/images/anime/3/40451l.jpg",
+  21:"https://cdn.myanimelist.net/images/anime/1244/138851l.jpg"
+};
+const seed=[
+ {id:20,name:"Наруто",rating:9.0,status:"done",watched:220,episodes:220,year:"2002 – 2007"},
+ {id:40748,name:"Магическая битва",rating:9.2,status:"done",watched:47,episodes:47,year:"2020 – 2023"},
+ {id:269,name:"Блич",rating:8.7,status:"done",watched:366,episodes:366,year:"2004 – 2012"},
+ {id:21,name:"Ван Пис",rating:9.3,status:"watching",watched:0,episodes:1100,year:"1999 – …"}
+];
+
+const fallbackDetails={
+  20:{
+    type:"TV", aired:"3 октября 2002 — 8 февраля 2007", original:"ナルト", episodes:220,
+    synopsis:"Двенадцать лет назад Девятихвостый Лис напал на Деревню Скрытого Листа. Четвёртый Хокаге запечатал зверя внутри новорождённого Наруто Удзумaki, обрёкши мальчика на одинокое детство. Теперь Наруто мечтает стать Хокаге и заслужить признание деревни.",
+    genres:["Action","Adventure","Fantasy","Martial Arts","Shounen"],
+    chars:[
+      ["Наруто Узумаки","https://cdn.myanimelist.net/images/characters/2/284399.jpg"],
+      ["Саске Учиха","https://cdn.myanimelist.net/images/characters/8/284365.jpg"],
+      ["Сакура Харуно","https://cdn.myanimelist.net/images/characters/4/279332.jpg"],
+      ["Какаши Хатаке","https://cdn.myanimelist.net/images/characters/7/284196.jpg"],
+      ["Ирука Умино","https://cdn.myanimelist.net/images/characters/8/284235.jpg"],
+      ["Хината Хьюга","https://cdn.myanimelist.net/images/characters/9/284277.jpg"]
+    ]
+  },
+  40748:{type:"TV",aired:"3 октября 2020 — 28 декабря 2023",original:"呪術廻戦",episodes:47,synopsis:"Юдзи Итадори присоединяется к миру магов после того, как оказывается втянут в опасную историю с проклятым объектом.",genres:["Action","Supernatural","School","Shounen"],chars:[["Юдзи Итадори",""],["Мэгуми Фусигуро",""],["Нобара Кугисаки",""],["Сатору Годзё",""],["Сугуру Гэто",""],["Рёмен Сукуна",""]]},
+  269:{type:"TV",aired:"5 октября 2004 — 27 марта 2012",original:"BLEACH",episodes:366,synopsis:"Ичиго Куросаки получает силы Проводника душ и оказывается втянут в мир духов и опасных противников.",genres:["Action","Adventure","Supernatural","Shounen"],chars:[["Ичиго Куросаки",""],["Рукия Кучики",""],["Орихимэ Иноуэ",""],["Урю Исида",""],["Бьякуя Кучики",""],["Кэнпати Дзараки",""]]},
+  21:{type:"TV",aired:"20 октября 1999 — …",original:"ONE PIECE",episodes:1100,synopsis:"Монки Д. Луффи отправляется в великое путешествие, чтобы найти легендарное сокровище One Piece и стать Королём пиратов.",genres:["Action","Adventure","Fantasy","Shounen"],chars:[["Монки Д. Луффи",""],["Ророноа Зоро",""],["Нами",""],["Санджи",""],["Усопп",""],["Тони Тони Чоппер",""]]}
+};
+
+let collection=JSON.parse(localStorage.getItem("aniflow-v5")||"null");
+if(!collection){
+  const old=JSON.parse(localStorage.getItem("aniflow-v4")||"null");
+  collection=old||seed;
+  localStorage.setItem("aniflow-v5",JSON.stringify(collection));
+}
+collection=collection.map((a,i)=>({...a,addedAt:a.addedAt||i}));
+let current=null;
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("aniflow-v5",JSON.stringify(collection))}
+function statusName(s){return {done:"Просмотрено",watching:"Смотрю",want:"Хочу посмотреть"}[s]||s}
+function posterFor(a){return posters[a.id]||a.poster||""}
+function safe(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+function initials(name){return safe(name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase())}
+
+function cardHTML(a){
+ return `<article class="card" data-id="${a.id}">
+ <div class="poster"><div class="fallback"><b>${safe(a.name)}</b></div>
+ ${posterFor(a)?`<img src="${posterFor(a)}" alt="${safe(a.name)}">`:""}
+ <span class="status ${a.status}">${statusName(a.status)}</span></div>
+ <div class="body"><div class="name-row"><div class="name">${safe(a.name)}</div><div class="rating">${Number(a.rating)>0?`★ ${Number(a.rating).toFixed(1)}`:"—"}</div></div>
+ <div class="meta">TV · ${safe(a.year||"—")}<br>${a.episodes?a.episodes+" серий":"Количество серий неизвестно"}</div>
+ <div class="bar" style="width:${a.episodes?Math.min(100,(a.watched||0)/a.episodes*100):0}%"></div></div></article>`;
+}
+let activeStatus="all";
+
+function render(){
+ const q=$("search").value.trim().toLowerCase();
+ let list=collection.filter(a=>{
+   const matchesSearch=a.name.toLowerCase().includes(q);
+   const matchesStatus=activeStatus==="all" || a.status===activeStatus;
+   return matchesSearch && matchesStatus;
+ });
+ const sort=$("sort").value;
+ list=[...list].sort((a,b)=>{
+   if(sort==="rating-desc") return (Number(b.rating)||0)-(Number(a.rating)||0);
+   if(sort==="rating-asc") return (Number(a.rating)||0)-(Number(b.rating)||0);
+   if(sort==="name") return a.name.localeCompare(b.name,"ru");
+   if(sort==="progress"){
+     const pa=a.episodes?((a.watched||0)/a.episodes):0;
+     const pb=b.episodes?((b.watched||0)/b.episodes):0;
+     return pb-pa;
+   }
+   if(sort==="added") return (b.addedAt||0)-(a.addedAt||0);
+   return 0;
+ });
+ $("count").textContent=`${list.length} из ${collection.length} аниме`;
+ $("grid").innerHTML=list.map(cardHTML).join("");
+ document.querySelectorAll(".card").forEach(card=>{
+   const a=collection.find(x=>String(x.id)===card.dataset.id);
+   const img=card.querySelector(".poster img"), fallback=card.querySelector(".fallback");
+   if(img){
+     img.onload=()=>{if(fallback)fallback.remove()};
+     img.onerror=()=>{img.remove()};
+   }
+   card.addEventListener("click",()=>openDetail(a));
+ });
+ updateStats();
+}
+
+function updateStats(){
+ const total=collection.length,done=collection.filter(a=>a.status==="done").length,watch=collection.filter(a=>a.status==="watching").length,want=collection.filter(a=>a.status==="want").length;
+ const rated=collection.filter(a=>Number(a.rating)>0);
+ const avg=rated.length?rated.reduce((s,a)=>s+Number(a.rating),0)/rated.length:0;
+ $("total").textContent=total;$("done").textContent=done;$("watching").textContent=watch;$("want").textContent=want;$("avg").textContent=avg.toFixed(2);
+ const c=Array(10).fill(0);rated.forEach(a=>{let n=Math.round(Number(a.rating));if(n>=1&&n<=10)c[n-1]++});const max=Math.max(...c,1);
+ $("bars").innerHTML=c.map((n,i)=>`<div class="bw"><div class="b" style="height:${n?Math.max(10,n/max*80):0}px"></div>${i+1}</div>`).join("");
+}
+
+async function fetchJSON(url, attempts=2){
+  const urls = [
+    url,
+    "https://api.allorigins.win/raw?url="+encodeURIComponent(url)
+  ];
+  let last;
+  for(const target of urls){
+    for(let i=0;i<attempts;i++){
+      try{
+        const r=await fetch(target,{cache:"no-store"});
+        if(!r.ok) throw new Error("HTTP "+r.status);
+        return await r.json();
+      }catch(e){
+        last=e;
+        await new Promise(r=>setTimeout(r,700*(i+1)));
+      }
+    }
+  }
+  throw last||new Error("request failed");
+}
+
+function detailCacheKey(id){return "aniflow-detail-v5-"+id}
+function renderChars(list){
+ $("chars").innerHTML="";
+ if(!list?.length){
+   $("chars").innerHTML='<div class="sub">Персонажи пока недоступны.</div>';
+   return;
+ }
+ list.slice(0,6).forEach(([name,img])=>{
+   const el=document.createElement("div");el.className="char";
+   el.innerHTML=`${img?`<img src="${img}" alt="">`:`<div class="char-fallback">${initials(name)}</div>`}<div>${safe(name)}</div>`;
+   const im=el.querySelector("img");
+   if(im) im.onerror=()=>{im.replaceWith(Object.assign(document.createElement("div"),{className:"char-fallback",textContent:initials(name)}))};
+   $("chars").appendChild(el);
+ });
+}
+
+function applyDetail(d,a){
+ $("dType").textContent=`${d.type||"TV"} · ${d.aired||a.year||""}`;
+ if($("malScore")) $("malScore").textContent = d.malScore ?? a.malScore ?? "—";
+ if($("shikiScore")) $("shikiScore").textContent = a.shikiScore ?? "—";
+ if($("ratingsNote")) $("ratingsNote").textContent = a.shikiScore ? "Рейтинги загружены из открытых источников." : "Shikimori загрузится отдельно, если API доступен.";
+ $("dOriginal").textContent=d.original||d.title_japanese||d.title||"";
+ $("dDesc").textContent=d.synopsis||"Описание пока недоступно.";
+ $("dGenres").innerHTML=(d.genres||[]).map(g=>`<span class="chip">${safe(typeof g==="string"?g:g.name)}</span>`).join("");
+ const total=d.episodes||a.episodes||0;
+ $("dEpisodes").textContent="/ "+(total||"?")+" серий"; $("dProgress").max=total||9999;
+ if(d.poster)$("dPoster").src=d.poster;
+ renderChars(d.chars||[]);
+}
+
+async function loadShikimoriRating(a, merged){
+  const cacheKey="aniflow-shiki-rating-"+a.id;
+  try{
+    const cached=JSON.parse(localStorage.getItem(cacheKey)||"null");
+    if(cached && cached.score!=null && Date.now()-cached.savedAt < 1000*60*60*24){
+      a.shikiScore=cached.score;
+      if(current===a) applyDetail({...merged,malScore:merged.malScore},a);
+      return;
+    }
+  }catch{}
+  try{
+    const r=await fetch(`https://shikimori.one/api/animes/${encodeURIComponent(a.id)}`,{headers:{"Accept":"application/json"}});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const d=await r.json();
+    if(d && d.score!=null){
+      a.shikiScore=Number(d.score);
+      localStorage.setItem(cacheKey,JSON.stringify({score:a.shikiScore,savedAt:Date.now()}));
+      if(current===a) applyDetail({...merged,malScore:merged.malScore},a);
+    }
+  }catch(e){
+    if(current===a && $("ratingsNote")) $("ratingsNote").textContent="Shikimori сейчас недоступен — MAL продолжает работать.";
+  }
+}
+
+async function openDetail(a){
+ current=a;
+ $("detailModal").classList.add("open");
+ $("dTitle").textContent=a.name;
+ $("dDesc").textContent="Загружаю расширенные данные…";
+ $("dGenres").innerHTML="";
+ $("chars").innerHTML='<div class="sub">Загружаю персонажей…</div>';
+ $("dPoster").src=posterFor(a); $("dPoster").alt=a.name;
+ $("dRating").value=Number(a.rating)>0?a.rating:"";
+ $("dStatus").value=a.status||"want";
+ $("dProgress").value=a.watched||0;
+ if($("malScore")) $("malScore").textContent=a.malScore ?? "—";
+ if($("shikiScore")) $("shikiScore").textContent=a.shikiScore ?? "—";
+ if($("ratingsNote")) $("ratingsNote").textContent="Загружаю рейтинги…";
+ const fb=fallbackDetails[a.id];
+ if(fb) applyDetail({...fb,poster:posterFor(a)},a);
+
+ // First show cached data if available, so the page never looks broken.
+ try{
+   const cached=JSON.parse(localStorage.getItem(detailCacheKey(a.id))||"null");
+   if(cached) applyDetail(cached,a);
+ }catch{}
+
+ // Full info and characters are separate Jikan endpoints.
+ try{
+   const [full,chars] = await Promise.all([
+     fetchJSON(`https://api.jikan.moe/v4/anime/${a.id}/full`),
+     fetchJSON(`https://api.jikan.moe/v4/anime/${a.id}/characters`)
+   ]);
+   const d=full.data||{};
+   const charList=(chars.data||[]).map(x=>[x.character?.name,x.character?.images?.webp?.image_url||x.character?.images?.jpg?.image_url]).filter(x=>x[0]);
+   const merged={
+     type:d.type, aired:d.aired?.string||"", original:d.title_japanese||d.title||"",
+     episodes:d.episodes, synopsis:d.synopsis, genres:d.genres||[],
+     poster:d.images?.webp?.large_image_url||d.images?.jpg?.large_image_url||posterFor(a),
+     chars:charList, malScore:d.score ?? null, malVotes:d.scored_by ?? null,
+     rank:d.rank ?? null, members:d.members ?? null
+   };
+   localStorage.setItem(detailCacheKey(a.id),JSON.stringify(merged));
+   if(current===a) applyDetail(merged,a);
+   await loadShikimoriRating(a, merged);
+ }catch(e){
+   // Fallback data stays visible. Only show a small note when nothing useful exists.
+   if(!fb){
+     $("dDesc").textContent="Расширенные данные временно недоступны. Попробуй открыть аниме ещё раз через несколько секунд.";
+     renderChars([]);
+   }
+ }
+}
+
+$("closeDetail").onclick=()=>$("detailModal").classList.remove("open");
+$("saveDetail").onclick=()=>{
+ if(!current)return;
+ const ratingValue=Number($("dRating").value);
+ current.rating=(Number.isFinite(ratingValue)&&ratingValue>=1&&ratingValue<=10)?Math.round(ratingValue*10)/10:0;
+ current.status=$("dStatus").value;
+ const max=Number($("dProgress").max)||9999;
+ current.watched=Math.min(max,Math.max(0,Number($("dProgress").value)||0));
+ if(current.episodes && current.watched>=current.episodes) current.status="done";
+ save();render();$("detailModal").classList.remove("open");
+};
+$("deleteDetail").onclick=()=>{
+ if(!current)return;
+ if(confirm(`Удалить «${current.name}» из коллекции?`)){
+   collection=collection.filter(a=>a!==current);save();render();$("detailModal").classList.remove("open");current=null;
+ }
+};
+$("search").oninput=render;
+document.querySelectorAll(".filter").forEach(btn=>{
+ btn.onclick=()=>{
+   document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+   btn.classList.add("active");
+   activeStatus=btn.dataset.status;
+   render();
+ };
+});
+$("sort").onchange=render;
+let selectedAnimeData=null;
+
+function escapeHtml(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function formatYear(a){
+ const y=a?.year || a?.aired?.from || "";
+ return String(y).slice(0,4) || "—";
+}
+function animeResultHTML(a){
+ const img=a.images?.webp?.large_image_url || a.images?.jpg?.large_image_url || "";
+ const title=a.title || a.title_english || "Без названия";
+ const type=a.type || "—";
+ const eps=a.episodes ?? "—";
+ const score=a.score ? `★ ${a.score}` : "Без оценки";
+ return `<div class="search-result" data-id="${a.mal_id}">
+   <img src="${escapeHtml(img)}" alt="">
+   <div class="sr-main"><h4>${escapeHtml(title)}</h4>
+   <p>${escapeHtml(formatYear(a))} · ${escapeHtml(type)} · ${eps} серий · ${escapeHtml(score)}</p>
+   <p>${escapeHtml((a.synopsis||"").slice(0,150))}${a.synopsis?.length>150?"…":""}</p></div>
+ </div>`;
+}
+async function searchAnime(){
+ const q=$("animeSearch").value.trim();
+ if(q.length<2){
+   $("searchState").textContent="Введи хотя бы 2 символа.";
+   $("searchResults").innerHTML="";
+   return;
+ }
+ $("searchState").textContent="Ищу аниме…";
+ $("searchResults").innerHTML="";
+
+ // 1) Jikan / MAL — основной источник.
+ try{
+   const r=await fetchJSON(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}&limit=8&sfw=true`);
+   const list=r.data||[];
+   if(list.length) return showSearchResults(list);
+ }catch(e){}
+
+ // 2) Если Jikan недоступен, пробуем AniList. У него есть MAL ID (idMal),
+ // поэтому найденный результат остаётся совместимым с нашей коллекцией.
+ try{
+   const query=`query ($search:String){ Page(page:1,perPage:8){ media(search:$search,type:ANIME){ id idMal title{ romaji english native userPreferred } description episodes averageScore startDate{year} coverImage{large} format } } }`;
+   const r=await fetch("https://graphql.anilist.co",{
+     method:"POST",
+     headers:{"Content-Type":"application/json","Accept":"application/json"},
+     body:JSON.stringify({query,variables:{search:q}})
+   });
+   if(!r.ok) throw new Error("AniList HTTP "+r.status);
+   const j=await r.json();
+   const media=(j.data?.Page?.media||[]).filter(x=>x.idMal);
+   const list=media.map(x=>({
+     mal_id:x.idMal,
+     title:x.title?.userPreferred||x.title?.romaji||x.title?.english||x.title?.native||"Без названия",
+     title_english:x.title?.english||"",
+     title_japanese:x.title?.native||"",
+     type:x.format==="TV"?"TV":x.format==="MOVIE"?"Movie":x.format||"",
+     episodes:x.episodes||null,
+     score:x.averageScore?Number((x.averageScore/10).toFixed(2)):null,
+     aired:{string:x.startDate?.year?String(x.startDate.year):""},
+     images:{webp:{large_image_url:x.coverImage?.large||""},jpg:{large_image_url:x.coverImage?.large||""}},
+     synopsis:x.description?String(x.description).replace(/<[^>]+>/g," "):""
+   }));
+   if(list.length) return showSearchResults(list);
+ }catch(e){}
+
+ // 3) Совсем без интернета — даём понятный ответ, а не загадочную ошибку.
+ $("searchState").textContent="Не удалось связаться с базами аниме. Проверь интернет и попробуй ещё раз.";
+}
+function showSearchResults(list){
+ $("searchState").textContent=`Найдено: ${list.length}`;
+ $("searchResults").innerHTML=list.map(animeResultHTML).join("");
+ document.querySelectorAll(".search-result").forEach(el=>{
+   el.onclick=()=>selectAnimeResult(list.find(a=>String(a.mal_id)===el.dataset.id));
+ });
+}
+function selectAnimeResult(a){
+ if(!a)return;
+ selectedAnimeData=a;
+ $("selectedAnime").style.display="block";
+ $("selectedPoster").src=a.images?.webp?.large_image_url || a.images?.jpg?.large_image_url || "";
+ $("newName").value=a.title||"";
+ $("newStatus").value="want"; $("newRating").value=""; $("newWatched").value=0;
+ $("searchState").textContent="Выбрано: "+(a.title||"");
+}
+function resetAdd(){
+ selectedAnimeData=null;
+ $("selectedAnime").style.display="none";
+ $("searchResults").innerHTML=""; $("searchState").textContent="Начни с названия аниме.";
+ $("animeSearch").value="";
+}
+function addSelectedAnime(){
+ const a=selectedAnimeData; if(!a)return;
+ const id=a.mal_id;
+ if(collection.some(x=>String(x.id)===String(id))){
+   alert("Это аниме уже есть в твоей коллекции.");
+   return;
+ }
+ const rv=Number($("newRating").value);
+ const episodes=a.episodes||0;
+ const watched=Math.max(0,Math.min(episodes||999999,Number($("newWatched").value)||0));
+ let status=$("newStatus").value;
+ if(episodes && watched>=episodes) status="done";
+ collection.push({
+   id, name:a.title||"Без названия", rating:(rv>=1&&rv<=10)?Math.round(rv*10)/10:0,
+   status, watched, episodes, year:a.aired?.string||formatYear(a),
+   poster:a.images?.webp?.large_image_url||a.images?.jpg?.large_image_url||"",
+   addedAt:Date.now(), synopsis:a.synopsis||"", genres:(a.genres||[]).map(g=>g.name),
+   type:a.type||"", titleEnglish:a.title_english||"", titleJapanese:a.title_japanese||"",
+   malScore:a.score ?? null, malVotes:a.scored_by ?? null
+ });
+ save(); render(); resetAdd(); $("addModal").classList.remove("open");
+}
+$("openAdd").onclick=()=>{
+  $("addModal").classList.add("open");
+  resetAdd();
+  setTimeout(()=>$("animeSearch").focus(),50);
+};
+$("doSearch").onclick=searchAnime;
+$("animeSearch").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();searchAnime()}});
+$("confirmAdd").onclick=addSelectedAnime;
+$("closeAdd").onclick=()=>{$("addModal").classList.remove("open");resetAdd()};
+
+render();
+</script>
+</body></html>
