@@ -337,48 +337,50 @@ export default {
      */
 
     if (url.pathname === "/api/search") {
-      const q = (
-        url.searchParams.get("q") || ""
-      ).trim();
+  const q = (url.searchParams.get("q") || "").trim();
 
-      if (q.length < 2) {
-        return json({
-          data: []
-        });
-      }
-
-      /*
-       * Запускаем три источника одновременно.
-       *
-       * Каждый получает максимум 5 секунд.
-       * Первый успешный ответ побеждает.
-       *
-       * Поэтому даже если Jikan лёг,
-       * AniList или Kitsu спасут поиск.
-       */
-
-     try {
-  const shikimori = await searchShikimori(q);
-
-  if (shikimori.data && shikimori.data.length > 0) {
-    return shikimori;
+  if (q.length < 2) {
+    return json({
+      data: []
+    });
   }
-} catch (e) {
-  console.log("Shikimori search failed:", e);
-}
 
-const result = await Promise.any([
-  searchJikan(q),
-  searchAniList(q),
-  searchKitsu(q)
-]);
+  try {
+    // Сначала пробуем Shikimori,
+    // чтобы русские запросы получали русские названия.
+    const shikimori = await searchShikimori(q);
 
-return result;
-
-      
-      }
+    if (
+      shikimori.data &&
+      shikimori.data.length > 0
+    ) {
+      return json(shikimori);
     }
+  } catch (error) {
+    console.log("Shikimori search failed:", error);
+  }
 
+  try {
+    // Если Shikimori не сработал — используем другие источники.
+    const result = await Promise.any([
+      searchJikan(q),
+      searchAniList(q),
+      searchKitsu(q)
+    ]);
+
+    return json(result);
+
+  } catch (error) {
+    return json(
+      {
+        data: [],
+        error: "search_unavailable",
+        message: "All anime search providers timed out or failed."
+      },
+      503
+    );
+  }
+}
     /*
      * ============================
      * JIKAN PROXY
